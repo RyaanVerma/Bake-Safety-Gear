@@ -1,0 +1,164 @@
+const int switch_ultrasonic = 2;  
+      int switch_state = 0;
+      
+const int led_RIGHT = 9;
+const int led_LEFT = 10;
+
+      
+const int trigPin_LEFT = 3;     //green/blue coupled  
+const int echoPin_LEFT = 4;     // yellow/yellow coupled
+                                // purple vcc, gnd blue // red vcc , brown gnd
+ 
+const int trigPin_RIGHT = 7;     // orange, R1 = black    
+const int echoPin_RIGHT = 8;     // red  ,  R1 = Yellow
+                                 // brown gnd, white vcc // R1=  red vcc, Black gnd
+
+const int vibration_LEFT = 5;
+      int intensity_LEFT;
+      
+const int vibration_RIGHT = 6;
+      int intensity_RIGHT;
+
+long duration_LEFT;
+long duration_RIGHT;  
+int distance_LEFT;
+int distance_RIGHT;
+
+void SonicLEFT();  
+void SonicRIGHT();
+
+void setup() 
+{
+pinMode(led_RIGHT, OUTPUT);
+pinMode(led_LEFT, OUTPUT);
+
+pinMode(vibration_LEFT, OUTPUT);
+pinMode(vibration_RIGHT, OUTPUT);  
+  
+pinMode(trigPin_LEFT, OUTPUT);// Sets the trigPin as an Output
+pinMode(trigPin_RIGHT, OUTPUT);
+
+pinMode(switch_ultrasonic, INPUT);
+pinMode(echoPin_LEFT, INPUT); // Sets the echoPin as an Input
+pinMode(echoPin_RIGHT, INPUT);
+Serial.begin(9600); // Starts the serial communication
+}
+
+
+
+void loop()
+{
+
+switch_state = digitalRead(switch_ultrasonic);
+
+if (switch_state == HIGH)
+
+{
+  
+SonicLEFT();
+SonicRIGHT();
+
+// Calculating the distance
+distance_LEFT= duration_LEFT*0.034/2;
+distance_RIGHT= duration_RIGHT*0.034/2;
+
+// Prints the distance on the Serial Monitor
+Serial.print("Distance LEFT: ");
+Serial.println(distance_LEFT);
+
+Serial.print("Distance RIGHT: ");
+Serial.println(distance_RIGHT);
+
+if (distance_LEFT > 150 && distance_LEFT <300 )
+{
+
+
+    if ( distance_LEFT>150 && distance_LEFT < 200)
+         {
+           digitalWrite(vibration_LEFT, 255*5);
+           digitalWrite(led_LEFT, 255);
+            delay(200);
+ 
+            digitalWrite(vibration_LEFT, 0); 
+            digitalWrite(led_LEFT, 0);
+            delay(distance_LEFT/2);
+          }
+   
+   
+   else   
+          {
+            digitalWrite(vibration_LEFT, 255*5);
+            digitalWrite(led_LEFT, 255);
+            delay(100);
+ 
+            digitalWrite(vibration_LEFT, 0);
+            digitalWrite(led_LEFT, 0); 
+            delay(distance_LEFT*5);
+
+          }
+}
+
+else if (distance_RIGHT > 150 && distance_RIGHT <300 )
+{
+
+
+    if ( distance_RIGHT>150 && distance_RIGHT < 200)
+         {
+           digitalWrite(vibration_RIGHT, 255*5);
+           digitalWrite(led_RIGHT, 255);
+            delay(200);
+ 
+            digitalWrite(vibration_RIGHT, 0);
+            digitalWrite(led_RIGHT, 0); 
+            delay(distance_RIGHT/2);
+          }
+   
+   
+   else   
+          {
+            digitalWrite(vibration_RIGHT, 255*5);
+            digitalWrite(led_RIGHT, 255);
+            delay(100);
+ 
+            digitalWrite(vibration_RIGHT, 0);
+            digitalWrite(led_RIGHT, 0); 
+            delay(distance_RIGHT*5);
+
+          }
+}
+
+}
+
+
+}
+void SonicLEFT(void)
+
+{
+  digitalWrite(trigPin_LEFT, LOW);
+delayMicroseconds(2);
+// Sets the trigPin on HIGH state for 10 micro seconds
+digitalWrite(trigPin_LEFT, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin_LEFT, LOW);
+// Reads the echoPin, returns the sound wave travel time in microseconds
+duration_LEFT = pulseIn(echoPin_LEFT, HIGH);
+
+return duration_LEFT;
+}
+
+
+
+void SonicRIGHT(void)
+{
+
+digitalWrite(trigPin_RIGHT, LOW);
+delayMicroseconds(2);
+// Sets the trigPin on HIGH state for 10 micro seconds
+digitalWrite(trigPin_RIGHT, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin_RIGHT, LOW);
+// Reads the echoPin, returns the sound wave travel time in microseconds
+duration_RIGHT = pulseIn(echoPin_RIGHT, HIGH);
+
+return duration_RIGHT;
+}
